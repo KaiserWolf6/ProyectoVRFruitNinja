@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 
 public class Blade : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class Blade : MonoBehaviour
     public Vector3 direction { get; private set; }
     public float sliceForce = 5f;
     public float minSliceVelocity = 0.01f;
+    private bool isTouchingController = false;
 
     private void Awake()
     {
@@ -60,18 +63,29 @@ public class Blade : MonoBehaviour
         transform.position = newPosition;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player")) {
+            isTouchingController = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            isTouchingController = false;
+        }
+    }
+
     // Update is called once per frame
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        isTouchingController = true;
+        if (isTouchingController)
         {
-            StartSlicing();
-        } else if(Input.GetMouseButtonUp(0))
-        {
-            StopSlicing();
-        } else if(slicing)
-        {
-            ContinueSlicing();
+            //Fruit fruit = other.GetComponent<Fruit>();
+            Destroy(gameObject);
         }
     }
 }
